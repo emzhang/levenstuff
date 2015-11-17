@@ -1,4 +1,4 @@
-#include <Python.h>
+#include <python2.7/Python.h>
 
 static int min(int * values, int length){
 	int i;
@@ -27,6 +27,94 @@ static int edit_distance(char * worda, char * wordb, int i, int j){
 	return min(triad, 3) + 1;
 }
 
+int ParseArgsMakeComparisons(long array[], Py_ssize_t array_size, Py_ssize_t args_size, PyObject *args) {
+	Py_ssize_t i; /*index of current word*/
+	Py_ssize_t j; /*index of word we compare current word to, should be subsequent to current word*/
+	Py_ssize_t k=0; /*current index in array*/
+	PyObject *temp_p1, *temp_p2, *temp_p3, *temp_p4;
+
+	for (i=0;i<args_size;i++) {
+		
+		temp_p1 = PyTuple_GetItem(args,i);
+		
+		temp_p2 = PyNumber_Long(temp_p1);
+
+		for (j=i+1;j<args_size;j++) {
+			temp_p3 = PyTuple_GetItem(args,j);
+			temp_p4 = PyNumber_Long(temp_p3);
+
+			array[k] = PyLong_AsUnsignedLong(PyNumber_Add(temp_p2, temp_p4));
+			k++;
+			Py_DECREF(temp_p3);
+			Py_DECREF(temp_p4);
+		}
+		// array[k] = PyLong_AsUnsignedLong(temp_p2);
+		Py_DECREF(temp_p2);
+// 		if(temp_p == NULL) {return NULL;}
+
+// 		 Check if temp_p is string 
+//         if (PyString_Check(temp_p) != 1) {
+//             PyErr_SetString(PyExc_TypeError,"Non-string argument.");
+//             return NULL;
+//         }
+
+//         /*TODO: make sure k isn't out of bounds*/
+//         for (j=i+1;j<args_size;j++) {	
+//         	temp_p2 = PyTuple_GetItem(args,j);
+//         	array[k] = edit_distance(temp_p, temp_p2, strlen(temp_p), strlen(temp_p2));
+//         	k++;
+//         }
+//         Py_DECREF(temp_p2);
+
+		// for (j=i+1;j<args_size;j++) {	
+        	// temp_p2 = PyTuple_GetItem(args,j);
+//         	array[k] = edit_distance(temp_p, temp_p2, strlen(temp_p), strlen(temp_p2));
+//         	k++;
+        	// array[k] = l;
+        	// k++;
+        	// array[k] = PyLong_AsUnsignedLong(PyNumber_Long(temp_p)) + PyLong_AsUnsignedLong(PyNumber_Long(temp_p2));
+        	// Py_DECREF(temp_p2);
+         // }
+	}
+	return 1;
+}
+
+PyObject *PyMultiVarEditDistance(PyObject *self, PyObject *args) {
+	Py_ssize_t num_words = PyTuple_Size(args);
+
+	// if (num_words < 2) {
+	// 	if(!PyErr_Occurred()) 
+ //            PyErr_SetString(PyExc_TypeError,"You must supply at least two arguments.");
+ //        return NULL;
+	// }
+
+	Py_ssize_t num_comparisons = num_words * (num_words-1) / 2;
+	long *comparisons = malloc(num_comparisons * sizeof(unsigned long));
+	PyObject *comparison_distances_list_out;
+	// ParseArgsMakeComparisons()
+	ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args);
+	// if (!(ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args))) { 
+ //        int j;
+ //        for(j=0;j<num_comparisons;j++) {
+ //        	free(comparisons[j]);
+ //        }
+ //        return NULL;
+ //    }
+
+    int i;
+
+    comparison_distances_list_out = PyList_New(num_comparisons);
+    for (i=0;i<num_comparisons;i++) {
+    	PyList_SET_ITEM(comparison_distances_list_out, i, comparisons[i]);
+    	free(comparisons[i]);
+    }
+    return (PyObject *) comparison_distances_list_out;
+
+
+
+	return NULL;
+}
+
 PyObject *PyEditDistance(PyObject *self, PyObject *args){
 	char * worda, * wordb;
 	int distance;
@@ -38,11 +126,58 @@ PyObject *PyEditDistance(PyObject *self, PyObject *args){
 	}
 
 	return NULL;
+    
+}
+
+PyObject *PyMultiEditDistance(PyObject *self, PyObject *args){
+	char * worda, * wordb, * wordc;
+	int distance1, distance2, distance3;
+
+	if(PyArg_ParseTuple(args, "sss", &worda, &wordb, &wordc)){
+		distance1 = edit_distance(worda, wordb, 
+						strlen(worda), strlen(wordb));
+        distance2 = edit_distance(worda, wordc, 
+						strlen(worda), strlen(wordc));
+        distance3 = edit_distance(wordb, wordc, 
+						strlen(wordb), strlen(wordc));
+		return Py_BuildValue("[iii]", distance1, distance2, distance3);
+	}
+
+	return NULL;
+    
+}
+
+PyObject *PyMultiEditDistance4(PyObject *self, PyObject *args){
+	char * worda, * wordb, * wordc, * wordd;
+	int distance1, distance2, distance3, distance4, distance5, distance6;
+
+	if(PyArg_ParseTuple(args, "ssss", &worda, &wordb, &wordc, &wordd)){
+		distance1 = edit_distance(worda, wordb, 
+						strlen(worda), strlen(wordb));
+        distance2 = edit_distance(worda, wordc, 
+						strlen(worda), strlen(wordc));
+        distance3 = edit_distance(worda, wordd, 
+						strlen(worda), strlen(wordd));
+        distance4 = edit_distance(wordb, wordc, 
+						strlen(wordb), strlen(wordc));
+        distance5 = edit_distance(wordb, wordd, 
+						strlen(wordb), strlen(wordd));
+        distance6 = edit_distance(wordc, wordd, 
+						strlen(wordc), strlen(wordd));
+        
+		return Py_BuildValue("[iiiiii]", distance1,distance2,distance3,distance4,distance5,distance6);
+	}
+
+	return NULL;
+    
 }
 
 PyMethodDef methods[] = {
 	{"edit_distance", PyEditDistance},
-	{NULL, NULL},
+    {"multi_edit_distance", PyMultiEditDistance},
+    {"multi_edit_distance4", PyMultiEditDistance4},
+    {"multi_var_edit_distance", PyMultiVarEditDistance},
+    {NULL, NULL},
 };
 
 void initlevenshtein(){
