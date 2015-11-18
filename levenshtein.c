@@ -37,34 +37,17 @@ int ParseArgsMakeComparisons(long array[], Py_ssize_t array_size, Py_ssize_t arg
 		
 		temp_p1 = PyTuple_GetItem(args,i);
 		
-		temp_p2 = PyNumber_Long(temp_p1);
+		//temp_p2 = PyNumber_Long(temp_p1);
 
 		for (j=i+1;j<args_size;j++) {
 			temp_p3 = PyTuple_GetItem(args,j);
-			temp_p4 = PyNumber_Long(temp_p3);
-
+			//temp_p4 = PyNumber_Long(temp_p3);
+			
 			array[k] = PyLong_AsUnsignedLong(PyNumber_Add(temp_p2, temp_p4));
 			k++;
 			Py_DECREF(temp_p3);
 			Py_DECREF(temp_p4);
 		}
-		// array[k] = PyLong_AsUnsignedLong(temp_p2);
-		// Py_DECREF(temp_p2);
-// 		if(temp_p == NULL) {return NULL;}
-
-// 		 Check if temp_p is string 
-//         if (PyString_Check(temp_p) != 1) {
-//             PyErr_SetString(PyExc_TypeError,"Non-string argument.");
-//             return NULL;
-//         }
-
-//         /*TODO: make sure k isn't out of bounds*/
-//         for (j=i+1;j<args_size;j++) {	
-//         	temp_p2 = PyTuple_GetItem(args,j);
-//         	array[k] = edit_distance(temp_p, temp_p2, strlen(temp_p), strlen(temp_p2));
-//         	k++;
-//         }
-//         Py_DECREF(temp_p2);
 	}
 	return 1;
 }
