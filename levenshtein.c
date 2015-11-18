@@ -27,26 +27,27 @@ static int edit_distance(char * worda, char * wordb, int i, int j){
 	return min(triad, 3) + 1;
 }
 
-int ParseArgsMakeComparisons(long array[], Py_ssize_t array_size, Py_ssize_t args_size, PyObject *args) {
+int ParseArgsMakeComparisons(int array[], Py_ssize_t array_size, Py_ssize_t args_size, PyObject *args) {
 	Py_ssize_t i; /*index of current word*/
 	Py_ssize_t j; /*index of word we compare current word to, should be subsequent to current word*/
 	Py_ssize_t k=0; /*current index in array*/
-	PyObject *temp_p1, *temp_p2, *temp_p3, *temp_p4;
+	PyObject *temp_p1, *temp_p3;
+	const char *word1, *word2;
 
 	for (i=0;i<args_size;i++) {
 		
 		temp_p1 = PyTuple_GetItem(args,i);
 		
-		//temp_p2 = PyNumber_Long(temp_p1);
+		word1 = PyString_AsString(temp_p1);
 
 		for (j=i+1;j<args_size;j++) {
 			temp_p3 = PyTuple_GetItem(args,j);
-			//temp_p4 = PyNumber_Long(temp_p3);
-			
-			array[k] = PyLong_AsUnsignedLong(PyNumber_Add(temp_p2, temp_p4));
+			word2 = PyString_AsString(temp_p3);
+
+			array[k] = edit_distance(word1, word2, strlen(word1), strlen(word2));
 			k++;
 			Py_DECREF(temp_p3);
-			Py_DECREF(temp_p4);
+			Py_DECREF(word2);
 		}
 	}
 	return 1;
@@ -63,7 +64,7 @@ PyObject *PyMultiVarEditDistance(PyObject *self, PyObject *args) {
 	// }
 
 	Py_ssize_t num_comparisons = num_words * (num_words-1) / 2;
-	long *comparisons = malloc(num_comparisons * sizeof(unsigned long));
+	int *comparisons = malloc(num_comparisons * sizeof(int));
 	PyObject *comparison_distances_list_out;
 	// ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args);
 	if (!(ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args))) { 
@@ -81,7 +82,6 @@ PyObject *PyMultiVarEditDistance(PyObject *self, PyObject *args) {
     }
     free(comparisons);
     return (PyObject *) comparison_distances_list_out;
-    // return Py_BuildValue("i", num_words);
 	
 	return NULL;
 }
