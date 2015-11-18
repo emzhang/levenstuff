@@ -49,7 +49,7 @@ int ParseArgsMakeComparisons(long array[], Py_ssize_t array_size, Py_ssize_t arg
 			Py_DECREF(temp_p4);
 		}
 		// array[k] = PyLong_AsUnsignedLong(temp_p2);
-		Py_DECREF(temp_p2);
+		// Py_DECREF(temp_p2);
 // 		if(temp_p == NULL) {return NULL;}
 
 // 		 Check if temp_p is string 
@@ -65,21 +65,12 @@ int ParseArgsMakeComparisons(long array[], Py_ssize_t array_size, Py_ssize_t arg
 //         	k++;
 //         }
 //         Py_DECREF(temp_p2);
-
-		// for (j=i+1;j<args_size;j++) {	
-        	// temp_p2 = PyTuple_GetItem(args,j);
-//         	array[k] = edit_distance(temp_p, temp_p2, strlen(temp_p), strlen(temp_p2));
-//         	k++;
-        	// array[k] = l;
-        	// k++;
-        	// array[k] = PyLong_AsUnsignedLong(PyNumber_Long(temp_p)) + PyLong_AsUnsignedLong(PyNumber_Long(temp_p2));
-        	// Py_DECREF(temp_p2);
-         // }
 	}
 	return 1;
 }
 
 PyObject *PyMultiVarEditDistance(PyObject *self, PyObject *args) {
+
 	Py_ssize_t num_words = PyTuple_Size(args);
 
 	// if (num_words < 2) {
@@ -91,27 +82,24 @@ PyObject *PyMultiVarEditDistance(PyObject *self, PyObject *args) {
 	Py_ssize_t num_comparisons = num_words * (num_words-1) / 2;
 	long *comparisons = malloc(num_comparisons * sizeof(unsigned long));
 	PyObject *comparison_distances_list_out;
-	// ParseArgsMakeComparisons()
-	ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args);
-	// if (!(ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args))) { 
- //        int j;
- //        for(j=0;j<num_comparisons;j++) {
- //        	free(comparisons[j]);
- //        }
- //        return NULL;
- //    }
-
-    int i;
+	// ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args);
+	if (!(ParseArgsMakeComparisons(comparisons, num_comparisons, num_words, args))) { 
+        free(comparisons);
+        return NULL;
+    }
+    
+    int i; 
 
     comparison_distances_list_out = PyList_New(num_comparisons);
+    
     for (i=0;i<num_comparisons;i++) {
-    	PyList_SET_ITEM(comparison_distances_list_out, i, comparisons[i]);
-    	free(comparisons[i]);
+    	PyList_SET_ITEM(comparison_distances_list_out, i, PyInt_FromLong(comparisons[i]));
+    	
     }
+    free(comparisons);
     return (PyObject *) comparison_distances_list_out;
-
-
-
+    // return Py_BuildValue("i", num_words);
+	
 	return NULL;
 }
 
