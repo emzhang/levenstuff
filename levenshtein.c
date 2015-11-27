@@ -39,11 +39,11 @@ int ParseArgsMakeComparisons(int array[], Py_ssize_t array_size, Py_ssize_t args
 		temp_p1 = PyTuple_GetItem(args,i);
 		
 		word1 = PyString_AsString(temp_p1);
-
+		printf("word1 %s\n", word1);
 		for (j=i+1;j<args_size;j++) {
 			temp_p2 = PyTuple_GetItem(args,j);
 			word2 = PyString_AsString(temp_p2);
-
+			printf("word2 %s\n", word2);
 			array[k] = edit_distance(word1, word2, strlen(word1), strlen(word2));
 			k++;
 			Py_DECREF(temp_p2);
@@ -59,6 +59,7 @@ int ParseArgsMakeComparisons(int array[], Py_ssize_t array_size, Py_ssize_t args
 PyObject *PyMultiVarEditDistance(PyObject *self, PyObject *args) {
 
 	Py_ssize_t num_words = PyTuple_Size(args);
+	
 
 	// if (num_words < 2) {
 	// 	if(!PyErr_Occurred()) 
