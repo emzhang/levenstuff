@@ -46,11 +46,11 @@ int ParseArgsMakeComparisons(int array[], Py_ssize_t array_size, Py_ssize_t args
 			printf("word2 %s\n", word2);
 			array[k] = edit_distance(word1, word2, strlen(word1), strlen(word2));
 			k++;
-			Py_DECREF(temp_p2);
-			Py_DECREF(word2);
+			//Py_DECREF(temp_p2);
+			//Py_DECREF(word2);
 		}
-		Py_DECREF(temp_p1);
-		Py_DECREF(word1);
+		//Py_DECREF(temp_p1);
+		//Py_DECREF(word1);
 	}
 	
 	return 1;
