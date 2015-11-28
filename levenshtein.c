@@ -1,4 +1,4 @@
-#include <python2.7/Python.h>
+#include <python3.4/Python.h>
 
 static int min(int * values, int length){
 	int i;
@@ -37,13 +37,10 @@ int ParseArgsMakeComparisons(int array[], Py_ssize_t array_size, Py_ssize_t args
 	for (i=0;i<args_size;i++) {
 		
 		temp_p1 = PyTuple_GetItem(args,i);
-		
-		word1 = PyString_AsString(temp_p1);
-		printf("word1 %s\n", word1);
+		PyArg_Parse(temp_p1, "s", &word1);				
 		for (j=i+1;j<args_size;j++) {
 			temp_p2 = PyTuple_GetItem(args,j);
-			word2 = PyString_AsString(temp_p2);
-			printf("word2 %s\n", word2);
+                        PyArg_Parse(temp_p2, "s", &word2);
 			array[k] = edit_distance(word1, word2, strlen(word1), strlen(word2));
 			k++;
 			//Py_DECREF(temp_p2);
@@ -80,7 +77,7 @@ PyObject *PyMultiVarEditDistance(PyObject *self, PyObject *args) {
     comparison_distances_list_out = PyList_New(num_comparisons);
     
     for (i=0;i<num_comparisons;i++) {
-    	PyList_SET_ITEM(comparison_distances_list_out, i, PyInt_FromLong(comparisons[i]));
+    	PyList_SET_ITEM(comparison_distances_list_out, i, PyLong_FromLong(comparisons[i]));
     	
     }
     free(comparisons);
@@ -146,20 +143,32 @@ PyObject *PyMultiEditDistance4(PyObject *self, PyObject *args){
     
 }
 
-PyMethodDef methods[] = {
-	{"edit_distance", PyEditDistance},
-    {"multi_edit_distance", PyMultiEditDistance},
-    {"multi_edit_distance4", PyMultiEditDistance4},
-    {"multi_var_edit_distance", PyMultiVarEditDistance},
-    {NULL, NULL},
+static PyMethodDef methods[] = {
+    {"edit_distance", PyEditDistance, METH_VARARGS, "edit distance"},
+    //{"multi_edit_distance", PyMultiEditDistance},
+    //{"multi_edit_distance4", PyMultiEditDistance4},
+    {"multi_var_edit_distance", PyMultiVarEditDistance, METH_VARARGS, "variable len edit distance"},
+    {NULL, NULL, 0, NULL},
 };
 
+static struct PyModuleDef levenshteinpy3 = {
+    PyModuleDef_HEAD_INIT,
+    "levenshteinpy3",
+    "levenshtein distance calculator for python 3",
+    -1, 
+    methods,
+}; 
+
+PyMODINIT_FUNC PyInit_levenshteinpy3(void) {
+  return PyModule_Create(&levenshteinpy3);
+}
+/*
 void initlevenshtein(){
 	PyObject *m;
 
-	m = Py_InitModule("levenshtein", methods);
+	m = Py_InitModule("levenshteinpy3", methods);
 	if(m==NULL) return;
 
 }
-
+*/
 

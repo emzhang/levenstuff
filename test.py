@@ -1,10 +1,10 @@
  ####TEST.PY####
-import levenshtein as l
+import levenshteinpy3 as l
 
-print "running mved : ",
-print l.multi_var_edit_distance("hi", "hello", "howdy", "yolo")
-print l.multi_var_edit_distance("hi", "hello", "howdy", "yolo")
-print l.multi_var_edit_distance("hi", "hello", "howdy", "yolo")
-print l.multi_var_edit_distance("hi", "hello", "howdy", "yolo")
-print l.multi_var_edit_distance("hi", "hello", "howdy", "yolo")
-print "success"
+print ("running mved : ")
+print (l.multi_var_edit_distance("hi", "hello", "howdy", "yolo"))
+print (l.multi_var_edit_distance("hi", "hello", "howdy", "yolo"))
+print (l.multi_var_edit_distance("hi", "hello", "howdy", "yolo"))
+print (l.multi_var_edit_distance("hi", "hello", "howdy", "yolo"))
+print (l.multi_var_edit_distance("hi", "hello", "howdy", "yolo"))
+print ("success")

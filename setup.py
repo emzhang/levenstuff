@@ -1,8 +1,8 @@
 from setuptools import setup, Extension
 
-levenshtein = Extension("levenshtein", sources=["levenshtein.c"])
+levenshteinpy3 = Extension("levenshteinpy3", sources=["levenshtein.c"])
 
-setup(name = "levenshtein",
+setup(name = "levenshteinpy3",
 		version = '0.1',
 		description = 'edit_distance extension for Python',
-		ext_modules = [levenshtein])
+		ext_modules = [levenshteinpy3])

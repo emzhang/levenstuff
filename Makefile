@@ -3,4 +3,4 @@ all:
 	python test.py
 
 clean:
-	rm -rf build levenshtein.egg-info levenshtein.so
+	rm -rf build levenshteinpy3.egg-info levenshteinpy3.so levenshteinpy3.cpython-34m.so 
